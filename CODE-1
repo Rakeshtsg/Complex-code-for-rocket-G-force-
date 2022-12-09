@@ -1,0 +1,60 @@
+#include <Arduino.h>
+
+// Define constants
+const int altitudeSensorPin = A0; // pin for altitude sensor
+const int temperatureSensorPin = A1; // pin for temperature sensor
+const int accelerometerPin = A2; // pin for accelerometer
+const int gyroscopePin = A3; // pin for gyroscope
+const int altimeterAlarmPin = 4; // pin for altimeter alarm
+const int temperatureAlarmPin = 5; // pin for temperature alarm
+const int warningLightPin = 6; // pin for warning light
+
+// Global variables
+int altitudeReading; // current altitude reading from sensor
+int temperatureReading; // current temperature reading from sensor
+int accelerometerReading; // current accelerometer reading from sensor
+int gyroscopeReading; // current gyroscope reading from sensor
+
+void setup() {
+  // Set the input and output pins
+  pinMode(altitudeSensorPin, INPUT);
+  pinMode(temperatureSensorPin, INPUT);
+  pinMode(accelerometerPin, INPUT);
+  pinMode(gyroscopePin, INPUT);
+  pinMode(altimeterAlarmPin, OUTPUT);
+  pinMode(temperatureAlarmPin, OUTPUT);
+  pinMode(warningLightPin, OUTPUT);
+}
+
+void loop() {
+  // Read sensor values
+  altitudeReading = analogRead(altitudeSensorPin);
+  temperatureReading = analogRead(temperatureSensorPin);
+  accelerometerReading = analogRead(accelerometerPin);
+  gyroscopeReading = analogRead(gyroscopePin);
+
+  // Check if altitude or temperature is outside of acceptable range and trigger alarm if necessary
+  if (altitudeReading < 1000 || altitudeReading > 10000) {
+    digitalWrite(altimeterAlarmPin, HIGH);
+    digitalWrite(warningLightPin, HIGH);
+  }
+  else {
+    digitalWrite(altimeterAlarmPin, LOW);
+  }
+
+  if (temperatureReading < -20 || temperatureReading > 100) {
+    digitalWrite(temperatureAlarmPin, HIGH);
+    digitalWrite(warningLightPin, HIGH);
+  }
+  else {
+    digitalWrite(temperatureAlarmPin, LOW);
+  }
+
+  // Check if the rocket is experiencing excessive G-force and trigger warning light if necessary
+  if (accelerometerReading > 15 || gyroscopeReading > 15) {
+    digitalWrite(warningLightPin, HIGH);
+  }
+  else {
+    digitalWrite(warningLightPin, LOW);
+  }
+}
